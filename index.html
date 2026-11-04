@@ -50,17 +50,12 @@ const venues=['ТіП Поділ','ТіП Оболонь','ТіП Харківс
 const first=['Маргарита','Андрій','Олена','Дмитро','Катерина','Владислав','Анастасія','Максим','Ірина','Богдан','Софія','Олександр'];const last=['Коваль','Мельник','Шевченко','Бондар','Кравченко','Лисенко','Ткаченко','Поліщук','Романюк','Савченко','Гриценко','Мороз'];
 let data=venues.map(venue=>({venue,people:[]}));
 let month='nov',selected=null;const fmt=n=>Number(n||0).toLocaleString('uk-UA',{maximumFractionDigits:2});const sorted=v=>[...v.people].sort((a,b)=>(b[month]||0)-(a[month]||0));const initials=s=>s.split(' ').map(x=>x[0]).slice(0,2).join('');const avatar=p=>p.photo?`<img src="${escapeHtml(p.photo)}" alt="">`:initials(p.name);function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-// Тестові фотографії Подолу. Інші учасники зберігають ініціали.
-const TEST_PHOTOS={
-  'Герой Каріна':'photos/hero-2.jpg',
-  'Герой Антон':'photos/hero-3.jpg',
-  'Герой Лєра':'photos/hero-1.jpg',
-  'Герой Лера':'photos/hero-1.jpg',
-  'Тестовий Герой 1':'photos/hero-2.jpg',
-  'Тестовий Герой 2':'photos/hero-3.jpg',
-  'Тестовий Герой 3':'photos/hero-1.jpg'
-};
-const photoFor=(venue,name)=>venue==='ТіП Поділ'?(TEST_PHOTOS[name]||''):'';
+// Шлях до фотографії надходить з окремої вкладки Google Sheets.
+// Дозволяємо лише локальні файли в папці photos.
+function photoFor(path){
+  const value=String(path||'').trim();
+  return /^photos\/[a-zA-Z0-9_\-./%]+\.(?:jpg|jpeg|png|webp)$/i.test(value)&&!value.includes('..')?value:'';
+}
 function setMonth(m){month=m;document.getElementById('nov').classList.toggle('active',m==='nov');document.getElementById('dec').classList.toggle('active',m==='dec');render()}
 function goHome(){selected=null;render();window.scrollTo({top:0,behavior:'smooth'})}function openVenue(i){selected=i;render();window.scrollTo({top:0,behavior:'smooth'})}
 function networkTop(){
@@ -83,7 +78,7 @@ function renderPodium(p,network=false){
   return [1,0,2].map((index)=>{let a=p[index];
     const medal=index+1;
     const active=network&&a;
-    return `<div class="place ${index===0?'first':index===1?'second':'third'}" ${active?`role="button" tabindex="0" aria-label="Відкрити ${escapeHtml(a.venue)}" onclick="openVenue(${a.venueIndex})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVenue(${a.venueIndex})}"`:''}><div class="portrait-area"><div class="avatar-wrap">${index===0?`<span class="top-crown">👑</span><span class="laurel"><svg viewBox="0 0 250 210" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="#d7a13b" stroke-width="2.5" stroke-linecap="round"><path d="M91 190 C45 170 20 122 43 56"/><path d="M159 190 C205 170 230 122 207 56"/></g><g fill="#e7ad38"><ellipse cx="57" cy="167" rx="6" ry="16" transform="rotate(-47 57 167)"/><ellipse cx="43" cy="147" rx="6" ry="15" transform="rotate(-29 43 147)"/><ellipse cx="34" cy="126" rx="6" ry="15" transform="rotate(-15 34 126)"/><ellipse cx="34" cy="105" rx="6" ry="14" transform="rotate(5 34 105)"/><ellipse cx="39" cy="84" rx="6" ry="14" transform="rotate(23 39 84)"/><ellipse cx="48" cy="65" rx="5" ry="13" transform="rotate(35 48 65)"/><ellipse cx="193" cy="167" rx="6" ry="16" transform="rotate(47 193 167)"/><ellipse cx="207" cy="147" rx="6" ry="15" transform="rotate(29 207 147)"/><ellipse cx="216" cy="126" rx="6" ry="15" transform="rotate(15 216 126)"/><ellipse cx="216" cy="105" rx="6" ry="14" transform="rotate(-5 216 105)"/><ellipse cx="211" cy="84" rx="6" ry="14" transform="rotate(-23 211 84)"/><ellipse cx="202" cy="65" rx="5" ry="13" transform="rotate(-35 202 65)"/></g></svg></span>`:''}<div class="avatar">${a?avatar(a):'?'}</div><span class="medal">${medal}</span></div></div><div class="stage">${network&&a?networkBadge(a):''}<div class="stage-name">${a?escapeHtml(a.name):'—'}</div>${!network&&a?networkBadge({...a,venue:p.venue||''}):''}${network&&a?`<div class="network-venue">${escapeHtml(a.venue)}</div>`:''}<div class="stage-value">${a?fmt(a[month]):'0'} л</div></div></div>`;
+    return `<div class="place ${index===0?'first':index===1?'second':'third'}" ${active?`role="button" tabindex="0" aria-label="Відкрити ${escapeHtml(a.venue)}" onclick="openVenue(${a.venueIndex})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVenue(${a.venueIndex})}"`:''}><div class="portrait-area"><div class="avatar-wrap">${index===0?`<span class="top-crown">👑</span><span class="laurel"><svg viewBox="0 0 250 210" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="#d7a13b" stroke-width="2.5" stroke-linecap="round"><path d="M91 190 C45 170 20 122 43 56"/><path d="M159 190 C205 170 230 122 207 56"/></g><g fill="#e7ad38"><ellipse cx="57" cy="167" rx="6" ry="16" transform="rotate(-47 57 167)"/><ellipse cx="43" cy="147" rx="6" ry="15" transform="rotate(-29 43 147)"/><ellipse cx="34" cy="126" rx="6" ry="15" transform="rotate(-15 34 126)"/><ellipse cx="34" cy="105" rx="6" ry="14" transform="rotate(5 34 105)"/><ellipse cx="39" cy="84" rx="6" ry="14" transform="rotate(23 39 84)"/><ellipse cx="48" cy="65" rx="5" ry="13" transform="rotate(35 48 65)"/><ellipse cx="193" cy="167" rx="6" ry="16" transform="rotate(47 193 167)"/><ellipse cx="207" cy="147" rx="6" ry="15" transform="rotate(29 207 147)"/><ellipse cx="216" cy="126" rx="6" ry="15" transform="rotate(15 216 126)"/><ellipse cx="216" cy="105" rx="6" ry="14" transform="rotate(-5 216 105)"/><ellipse cx="211" cy="84" rx="6" ry="14" transform="rotate(-23 211 84)"/><ellipse cx="202" cy="65" rx="5" ry="13" transform="rotate(-35 202 65)"/></g></svg></span>`:''}<div class="avatar">${a?avatar(a):'?'}</div><span class="medal">${medal}</span></div></div><div class="stage">${network&&a&&index===0?networkBadge(a):''}<div class="stage-name">${a?escapeHtml(a.name):'—'}</div>${!network&&a?networkBadge({...a,venue:p.venue||''}):''}${network&&a?`<div class="network-venue">${escapeHtml(a.venue)}</div>`:''}<div class="stage-value">${a?fmt(a[month]):'0'} л</div></div></div>`;
   }).join('');
 }
 function render(){
@@ -118,7 +113,7 @@ const DATA_URL='https://script.google.com/macros/s/AKfycbwKh9gPffJ9csREkyoJ334aZ
     data=j.restaurants.map(v=>({
       venue:String(v.name||''),
       people:(Array.isArray(v.heroes)?v.heroes:[]).filter(p=>p&&String(p.name||'').trim()).map(p=>({
-        name:String(p.name).trim(),nov:Number(p.november)||0,dec:Number(p.december)||0,photo:photoFor(String(v.name||''),String(p.name).trim())
+        name:String(p.name).trim(),nov:Number(p.november)||0,dec:Number(p.december)||0,photo:photoFor(p.photo)
       }))
     }));
     document.getElementById('mode').textContent='● LIVE · Google Sheets';
