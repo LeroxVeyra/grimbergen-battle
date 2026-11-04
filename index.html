@@ -6,12 +6,13 @@ let data=venues.map(venue=>({venue,people:[]}));
 let month='nov',selected=null;const fmt=n=>Number(n||0).toLocaleString('uk-UA',{maximumFractionDigits:2});const sorted=v=>[...v.people].sort((a,b)=>(b[month]||0)-(a[month]||0));const initials=s=>s.split(' ').map(x=>x[0]).slice(0,2).join('');const avatar=p=>p.photo?`<img src="${escapeHtml(p.photo)}" alt="">`:initials(p.name);function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 // Тестові фотографії Подолу. Інші учасники зберігають ініціали.
 const TEST_PHOTOS={
-  'Герой Каріна':'photos/hero-1.jpg',
-  'Герой Антон':'photos/hero-2.jpg',
-  'Герой Лера':'photos/hero-3.jpg',
-  'Тестовий Герой 1':'photos/hero-1.jpg',
-  'Тестовий Герой 2':'photos/hero-2.jpg',
-  'Тестовий Герой 3':'photos/hero-3.jpg'
+  'Герой Каріна':'photos/hero-2.jpg',
+  'Герой Антон':'photos/hero-3.jpg',
+  'Герой Лєра':'photos/hero-1.jpg',
+  'Герой Лера':'photos/hero-1.jpg',
+  'Тестовий Герой 1':'photos/hero-2.jpg',
+  'Тестовий Герой 2':'photos/hero-3.jpg',
+  'Тестовий Герой 3':'photos/hero-1.jpg'
 };
 const photoFor=(venue,name)=>venue==='ТіП Поділ'?(TEST_PHOTOS[name]||''):'';
 function setMonth(m){month=m;document.getElementById('nov').classList.toggle('active',m==='nov');document.getElementById('dec').classList.toggle('active',m==='dec');render()}
