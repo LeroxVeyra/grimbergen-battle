@@ -27,7 +27,25 @@
 .podium .first .stage-value{font-size:clamp(25px,4.2vw,52px)}
 @media(max-width:650px){.podium{min-height:0;padding:40px 1px 6px;gap:4px;margin:20px -5px 24px}.portrait-area{height:116px}.place.first .portrait-area{height:154px}.podium .avatar{width:clamp(75px,25vw,110px);height:clamp(75px,25vw,110px)}.podium .first .avatar{width:clamp(99px,31vw,140px);height:clamp(99px,31vw,140px)}.podium .laurel{width:calc(clamp(99px,31vw,140px) + 32px);height:calc(clamp(99px,31vw,140px) + 15px)}.podium .top-crown{bottom:calc(clamp(99px,31vw,140px) - 1px);font-size:30px}.podium .stage{height:100px;padding:23px 2px 6px;gap:5px}.podium .first .stage{height:137px}.podium .third .stage{height:88px}.podium .stage-name{font-size:clamp(10px,3vw,13px)}.podium .stage-value{font-size:clamp(18px,5vw,25px)}.podium .first .stage-value{font-size:clamp(23px,6vw,32px)}.podium .medal{width:34px;height:34px;font-size:21px;bottom:-13px}}
 @media(max-width:365px){.podium .avatar{width:73px;height:73px}.podium .first .avatar{width:96px;height:96px}.podium .laurel{width:125px;height:112px}.podium .top-crown{bottom:95px}.podium .stage-name{font-size:10px}}
-</style></head><body><div class="wrap"><div class="top"><div class="brand">⚔ GRIMBERGEN LEAGUE</div><div class="tag" id="mode">● ПІДКЛЮЧЕННЯ…</div></div><header><div class="eyebrow">🍺 СЕРВІС-ГЕРОЇ · СЕЗОН 2026</div><h1>GRIMBERGEN<br><span>BATTLE</span></h1><p>7 арен. 7 чемпіонів. Ящик пива — на кону.</p><div class="months"><button id="nov" class="active" onclick="setMonth('nov')">Листопад</button><button id="dec" onclick="setMonth('dec')">Грудень</button></div></header><main id="home"><div class="stats"><div class="stat"><strong>07</strong><small>ресторанів</small></div><div class="stat"><strong id="players">—</strong><small>учасників</small></div><div class="stat"><strong id="total">—</strong><small>літрів продано</small></div></div><div class="crown" id="champ"></div><h2>🏟 Обери свою арену</h2><div class="cards" id="cards"></div></main><section id="detail" class="hide"><button class="back" onclick="goHome()">← Усі ресторани</button><div class="eyebrow" style="color:var(--gold);letter-spacing:2px">ТУРНІРНА ТАБЛИЦЯ</div><h2 id="venue"></h2><p style="color:var(--muted)">Топ-3 на п'єдесталі. Усі інші — нижче. Боротьба триває!</p><div class="podium" id="podium"></div><h2>📊 Повний рейтинг</h2><div class="rank" id="ranking"></div></section><div class="foot" id="updated">Завантажуємо результати з Google Sheets…<br>Blanche + Double-Ambrée + Blonde · усі сорти разом, у літрах.</div></div><script>
+
+/* Network top-three: same podium as restaurants, compact mobile-first */
+.network-section{border:1px solid #494038;border-radius:22px;padding:23px 12px 14px;margin:24px 0 32px;background:radial-gradient(ellipse at 50% 68%,#76501a20,transparent 68%),#101014;overflow:hidden}
+.network-heading{text-align:center;font-size:clamp(20px,4vw,32px);letter-spacing:1.3px;margin:0 0 8px}
+.network-month{text-align:center;letter-spacing:5px;font-weight:800;font-size:12px;color:var(--gold)}
+.network-podium{margin:0 auto;min-height:390px;padding-top:40px}
+.network-podium .stage{gap:6px}
+.network-podium .stage-name{font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-weight:700}
+.network-podium .network-venue{font-size:clamp(9px,1.2vw,12px);color:#d4c3a0;line-height:1.2;position:relative;z-index:1;overflow-wrap:anywhere}
+.network-podium .stage-badge,.podium .stage-badge{position:relative;z-index:2;display:inline-flex;align-items:center;justify-content:center;max-width:100%;font:700 clamp(9px,1.15vw,12px) system-ui,sans-serif;line-height:1.2;border-radius:99px;padding:5px 8px;background:#0b0b0ce8;border:1px solid #b88b3c;color:#f3d28d;white-space:normal}
+.podium .stage-badge{margin-top:1px}
+.network-podium .stage{height:clamp(150px,17vw,194px)}
+.network-podium .first .stage{height:clamp(190px,21vw,235px)}
+.network-podium .third .stage{height:clamp(137px,15vw,170px)}
+.network-podium .place{cursor:pointer}
+.network-podium .place:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:6px}
+@media(max-width:650px){.network-section{padding:19px 5px 12px;border-radius:15px}.network-podium{min-height:0;padding-top:36px}.network-podium .stage{height:148px;padding:24px 3px 6px;gap:5px}.network-podium .first .stage{height:185px}.network-podium .third .stage{height:136px}.network-podium .stage-badge,.podium .stage-badge{font-size:9px;padding:4px 5px}.network-podium .network-venue{font-size:9px}.network-heading{font-size:21px}.network-month{font-size:10px}}
+@media(max-width:365px){.network-podium .stage-badge,.podium .stage-badge{font-size:8px;padding:3px}.network-podium .stage-name{font-size:10px}}
+</style></head><body><div class="wrap"><div class="top"><div class="brand">⚔ GRIMBERGEN LEAGUE</div><div class="tag" id="mode">● ПІДКЛЮЧЕННЯ…</div></div><header><div class="eyebrow">🍺 СЕРВІС-ГЕРОЇ · СЕЗОН 2026</div><h1>GRIMBERGEN<br><span>BATTLE</span></h1><p>7 арен. 7 чемпіонів. Ящик пива — на кону.</p><div class="months"><button id="nov" class="active" onclick="setMonth('nov')">Листопад</button><button id="dec" class="hide" onclick="setMonth('dec')">Грудень</button></div></header><main id="home"><div class="stats"><div class="stat"><strong>07</strong><small>ресторанів</small></div><div class="stat"><strong id="players">—</strong><small>учасників</small></div><div class="stat"><strong id="total">—</strong><small>літрів продано</small></div></div><section class="network-section" aria-label="Топ-3 лідера мережі"><h2 class="network-heading">ТОП-3 ЛІДЕРА МЕРЕЖІ</h2><div class="network-month" id="networkMonth">ЛИСТОПАД</div><div class="podium network-podium" id="networkPodium"></div></section><h2>🏟 Обери свою арену</h2><div class="cards" id="cards"></div></main><section id="detail" class="hide"><button class="back" onclick="goHome()">← Усі ресторани</button><div class="eyebrow" style="color:var(--gold);letter-spacing:2px">ТУРНІРНА ТАБЛИЦЯ</div><h2 id="venue"></h2><p style="color:var(--muted)">Топ-3 на п'єдесталі. Усі інші — нижче. Боротьба триває!</p><div class="podium" id="podium"></div><h2>📊 Повний рейтинг</h2><div class="rank" id="ranking"></div></section><div class="foot" id="updated">Завантажуємо результати з Google Sheets…<br>Blanche + Double-Ambrée + Blonde · усі сорти разом, у літрах.</div></div><script>
 const venues=['ТіП Поділ','ТіП Оболонь','ТіП Харківська','ТіП Троя','ТіП Печерськ','Теплий Трост','Теплий Ліськівська'];
 const first=['Маргарита','Андрій','Олена','Дмитро','Катерина','Владислав','Анастасія','Максим','Ірина','Богдан','Софія','Олександр'];const last=['Коваль','Мельник','Шевченко','Бондар','Кравченко','Лисенко','Ткаченко','Поліщук','Романюк','Савченко','Гриценко','Мороз'];
 let data=venues.map(venue=>({venue,people:[]}));
@@ -45,7 +63,51 @@ const TEST_PHOTOS={
 const photoFor=(venue,name)=>venue==='ТіП Поділ'?(TEST_PHOTOS[name]||''):'';
 function setMonth(m){month=m;document.getElementById('nov').classList.toggle('active',m==='nov');document.getElementById('dec').classList.toggle('active',m==='dec');render()}
 function goHome(){selected=null;render();window.scrollTo({top:0,behavior:'smooth'})}function openVenue(i){selected=i;render();window.scrollTo({top:0,behavior:'smooth'})}
-function render(){document.getElementById('home').classList.toggle('hide',selected!==null);document.getElementById('detail').classList.toggle('hide',selected===null);const leaders=data.map((v,i)=>({v,i,p:sorted(v)[0]}));const all=data.flatMap(v=>v.people);document.getElementById('players').textContent=all.length;document.getElementById('total').textContent=fmt(all.reduce((s,p)=>s+(+p[month]||0),0))+' л';const champ=leaders.filter(x=>x.p&&x.p[month]>0).sort((a,b)=>b.p[month]-a.p[month])[0];document.getElementById('champ').innerHTML=champ?`<div class="icon">👑</div><div><small>АБСОЛЮТНИЙ ЛІДЕР МЕРЕЖІ</small><strong>${escapeHtml(champ.p.name)}</strong><div>${escapeHtml(champ.v.venue)} · ${fmt(champ.p[month])} л</div></div>`:'<div class="icon">🏆</div><div>Лідер з’явиться після внесення продажів</div>';document.getElementById('cards').innerHTML=leaders.map(({v,i,p})=>`<button class="card" onclick="openVenue(${i})"><span class="num">АРЕНА 0${i+1}</span><span class="arrow">↗</span><h3>${escapeHtml(v.venue)}</h3><span class="liters">${p?fmt(p[month]):'0'} л</span><p>🥇 ${p&&p[month]>0?escapeHtml(p.name):'Лідера поки немає'}</p></button>`).join('');if(selected!==null){const v=data[selected],p=sorted(v);document.getElementById('venue').textContent=v.venue;document.getElementById('podium').innerHTML=[1,0,2].map((index)=>{let a=p[index];return `<div class="place ${index===0?'first':index===1?'second':'third'}"><div class="portrait-area"><div class="avatar-wrap">${index===0?`<span class="top-crown">👑</span><span class="laurel"><svg viewBox="0 0 250 210" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="#d7a13b" stroke-width="2.5" stroke-linecap="round"><path d="M91 190 C45 170 20 122 43 56"/><path d="M159 190 C205 170 230 122 207 56"/></g><g fill="#e7ad38"><ellipse cx="57" cy="167" rx="6" ry="16" transform="rotate(-47 57 167)"/><ellipse cx="43" cy="147" rx="6" ry="15" transform="rotate(-29 43 147)"/><ellipse cx="34" cy="126" rx="6" ry="15" transform="rotate(-15 34 126)"/><ellipse cx="34" cy="105" rx="6" ry="14" transform="rotate(5 34 105)"/><ellipse cx="39" cy="84" rx="6" ry="14" transform="rotate(23 39 84)"/><ellipse cx="48" cy="65" rx="5" ry="13" transform="rotate(35 48 65)"/><ellipse cx="193" cy="167" rx="6" ry="16" transform="rotate(47 193 167)"/><ellipse cx="207" cy="147" rx="6" ry="15" transform="rotate(29 207 147)"/><ellipse cx="216" cy="126" rx="6" ry="15" transform="rotate(15 216 126)"/><ellipse cx="216" cy="105" rx="6" ry="14" transform="rotate(-5 216 105)"/><ellipse cx="211" cy="84" rx="6" ry="14" transform="rotate(-23 211 84)"/><ellipse cx="202" cy="65" rx="5" ry="13" transform="rotate(-35 202 65)"/></g></svg></span>`:''}<div class="avatar">${a?avatar(a):'?'}</div><span class="medal">${index+1}</span></div></div><div class="stage"><div class="stage-name">${a?escapeHtml(a.name):'—'}</div><div class="stage-value">${a?fmt(a[month]):'0'} л</div></div></div>`}).join('');document.getElementById('ranking').innerHTML=p.map((a,i)=>`<div class="row"><div class="idx">${i+1}</div><div class="row-person">${a.photo?`<img class="rank-photo" src="${escapeHtml(a.photo)}" alt="">`:`<span class="rank-initials">${escapeHtml(initials(a.name))}</span>`}<div>${escapeHtml(a.name)}<small>${i===0?'🏆 Поточний лідер':`До лідера: ${fmt(Math.max(0,p[0][month]-a[month]))} л`}</small></div></div><strong>${fmt(a[month])} л</strong></div>`).join('')||'<div class="row">Поки немає учасників</div>'}}
+function networkTop(){
+  return data.flatMap((v,venueIndex)=>v.people.map((p,personIndex)=>({...p,venue:v.venue,venueIndex,personIndex})))
+    .filter(p=>Number(p[month])>0)
+    .sort((a,b)=>b[month]-a[month]||a.venueIndex-b.venueIndex||a.personIndex-b.personIndex)
+    .slice(0,3);
+}
+function networkPosition(a){
+  if(!a)return 0;
+  const top=networkTop();
+  const found=top.findIndex(p=>p.venue===a.venue&&p.name===a.name);
+  return found<0?0:found+1;
+}
+function networkBadge(a){
+  const n=networkPosition(a);
+  return n?`<div class="stage-badge">♛ ${n===1?'Абсолютний лідер мережі':`Лідер мережі №${n}`}</div>`:'';
+}
+function renderPodium(p,network=false){
+  return [1,0,2].map((index)=>{let a=p[index];
+    const medal=index+1;
+    const active=network&&a;
+    return `<div class="place ${index===0?'first':index===1?'second':'third'}" ${active?`role="button" tabindex="0" aria-label="Відкрити ${escapeHtml(a.venue)}" onclick="openVenue(${a.venueIndex})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVenue(${a.venueIndex})}"`:''}><div class="portrait-area"><div class="avatar-wrap">${index===0?`<span class="top-crown">👑</span><span class="laurel"><svg viewBox="0 0 250 210" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="#d7a13b" stroke-width="2.5" stroke-linecap="round"><path d="M91 190 C45 170 20 122 43 56"/><path d="M159 190 C205 170 230 122 207 56"/></g><g fill="#e7ad38"><ellipse cx="57" cy="167" rx="6" ry="16" transform="rotate(-47 57 167)"/><ellipse cx="43" cy="147" rx="6" ry="15" transform="rotate(-29 43 147)"/><ellipse cx="34" cy="126" rx="6" ry="15" transform="rotate(-15 34 126)"/><ellipse cx="34" cy="105" rx="6" ry="14" transform="rotate(5 34 105)"/><ellipse cx="39" cy="84" rx="6" ry="14" transform="rotate(23 39 84)"/><ellipse cx="48" cy="65" rx="5" ry="13" transform="rotate(35 48 65)"/><ellipse cx="193" cy="167" rx="6" ry="16" transform="rotate(47 193 167)"/><ellipse cx="207" cy="147" rx="6" ry="15" transform="rotate(29 207 147)"/><ellipse cx="216" cy="126" rx="6" ry="15" transform="rotate(15 216 126)"/><ellipse cx="216" cy="105" rx="6" ry="14" transform="rotate(-5 216 105)"/><ellipse cx="211" cy="84" rx="6" ry="14" transform="rotate(-23 211 84)"/><ellipse cx="202" cy="65" rx="5" ry="13" transform="rotate(-35 202 65)"/></g></svg></span>`:''}<div class="avatar">${a?avatar(a):'?'}</div><span class="medal">${medal}</span></div></div><div class="stage">${network&&a?networkBadge(a):''}<div class="stage-name">${a?escapeHtml(a.name):'—'}</div>${!network&&a?networkBadge({...a,venue:p.venue||''}):''}${network&&a?`<div class="network-venue">${escapeHtml(a.venue)}</div>`:''}<div class="stage-value">${a?fmt(a[month]):'0'} л</div></div></div>`;
+  }).join('');
+}
+function render(){
+  document.getElementById('home').classList.toggle('hide',selected!==null);
+  document.getElementById('detail').classList.toggle('hide',selected===null);
+  const leaders=data.map((v,i)=>({v,i,p:sorted(v)[0]}));
+  const all=data.flatMap(v=>v.people);
+  document.getElementById('players').textContent=all.length;
+  document.getElementById('total').textContent=fmt(all.reduce((s,p)=>s+(+p[month]||0),0))+' л';
+  const top=networkTop();
+  document.getElementById('networkMonth').textContent=month==='nov'?'ЛИСТОПАД':'ГРУДЕНЬ';
+  document.getElementById('networkPodium').innerHTML=top.length?renderPodium(top,true):'<p style="grid-column:1/-1;text-align:center;color:var(--muted)">Лідери з’являться після внесення продажів.</p>';
+  document.getElementById('cards').innerHTML=leaders.map(({v,i,p})=>`<button class="card" onclick="openVenue(${i})"><span class="num">АРЕНА 0${i+1}</span><span class="arrow">↗</span><h3>${escapeHtml(v.venue)}</h3><span class="liters">${p?fmt(p[month]):'0'} л</span><p>🥇 ${p&&p[month]>0?escapeHtml(p.name):'Лідера поки немає'}</p></button>`).join('');
+  if(selected!==null){
+    const v=data[selected],p=sorted(v);
+    document.getElementById('venue').textContent=v.venue;
+    document.getElementById('podium').innerHTML=renderPodium(p.map(a=>({...a,venue:v.venue})),false);
+    document.getElementById('ranking').innerHTML=p.map((a,i)=>{
+      const position=networkPosition({...a,venue:v.venue});
+      const detail=position?`👑 ${position===1?'Абсолютний лідер мережі':`Лідер мережі №${position}`}`:i===0?'🏆 Поточний лідер':`До лідера: ${fmt(Math.max(0,p[0][month]-a[month]))} л`;
+      return `<div class="row"><div class="idx">${i+1}</div><div class="row-person">${a.photo?`<img class="rank-photo" src="${escapeHtml(a.photo)}" alt="">`:`<span class="rank-initials">${escapeHtml(initials(a.name))}</span>`}<div>${escapeHtml(a.name)}<small>${detail}</small></div></div><strong>${fmt(a[month])} л</strong></div>`;
+    }).join('')||'<div class="row">Поки немає учасників</div>';
+  }
+}
 // For a published site, set DATA_URL to the deployed Apps Script JSON endpoint.
 const DATA_URL='https://script.google.com/macros/s/AKfycbwKh9gPffJ9csREkyoJ334aZG9lX1npgSJSJx4Ow1mFOKVmST2CGuRv32kOD4TzBMCQ/exec';async function refresh(){
   try {
