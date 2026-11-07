@@ -45,11 +45,14 @@
 .network-podium .place:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:6px}
 @media(max-width:650px){.network-section{padding:19px 5px 12px;border-radius:15px}.network-podium{min-height:0;padding-top:36px}.network-podium .stage{height:148px;padding:24px 3px 6px;gap:5px}.network-podium .first .stage{height:185px}.network-podium .third .stage{height:136px}.network-podium .stage-badge,.podium .stage-badge{font-size:9px;padding:4px 5px}.network-podium .network-venue{font-size:9px}.network-heading{font-size:21px}.network-month{font-size:10px}}
 @media(max-width:365px){.network-podium .stage-badge,.podium .stage-badge{font-size:8px;padding:3px}.network-podium .stage-name{font-size:10px}}
+
+/* Restaurant overview: progress on the left, cumulative liters on the right */
+.card{min-height:185px}.card .arrow{float:none}.card-top{display:flex;align-items:center;justify-content:space-between}.card-metrics{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:end;margin-top:18px}.card-progress,.card-sales{min-width:0}.card-progress-label,.card-sales-label{display:block;color:var(--muted);font-size:11px;line-height:1.4;min-height:32px}.card-progress-value{display:block;font-size:25px;font-weight:900;margin-top:6px}.card-progress-value.up{color:#54d59b}.card-progress-value.down{color:#f29a9a}.card-progress-value.flat{color:#e9b951}.card-progress-value.unknown{color:#a4a8b4}.card-sales{text-align:right}.card-sales-value{display:block;font-size:clamp(23px,3vw,32px);font-weight:900;margin-top:6px;white-space:nowrap}.card-progress-note{display:block;color:var(--muted);font-size:10px;margin-top:5px}.card h3{margin-bottom:0}@media(max-width:420px){.card{padding:19px}.card-progress-value{font-size:23px}.card-sales-value{font-size:25px}}
 </style></head><body><div class="wrap"><div class="top"><div class="brand">⚔ GRIMBERGEN LEAGUE</div><div class="tag" id="mode">● ПІДКЛЮЧЕННЯ…</div></div><header><div class="eyebrow">🍺 СЕРВІС-ГЕРОЇ · СЕЗОН 2026</div><h1>GRIMBERGEN<br><span>BATTLE</span></h1><p>7 арен. 7 чемпіонів. Ящик пива — на кону.</p><div class="months"><button id="nov" class="active" onclick="setMonth('nov')">Листопад</button><button id="dec" class="hide" onclick="setMonth('dec')">Грудень</button></div></header><main id="home"><div class="stats"><div class="stat"><strong>07</strong><small>ресторанів</small></div><div class="stat"><strong id="players">—</strong><small>учасників</small></div><div class="stat"><strong id="total">—</strong><small>літрів продано</small></div></div><section class="network-section" aria-label="Топ-3 лідера мережі"><h2 class="network-heading">ТОП-3 ЛІДЕРА МЕРЕЖІ</h2><div class="network-month" id="networkMonth">ЛИСТОПАД</div><div class="podium network-podium" id="networkPodium"></div></section><h2>🏟 Обери свою арену</h2><div class="cards" id="cards"></div></main><section id="detail" class="hide"><button class="back" onclick="goHome()">← Усі ресторани</button><div class="eyebrow" style="color:var(--gold);letter-spacing:2px">ТУРНІРНА ТАБЛИЦЯ</div><h2 id="venue"></h2><p style="color:var(--muted)">Топ-3 на п'єдесталі. Усі інші — нижче. Боротьба триває!</p><div class="podium" id="podium"></div><h2>📊 Повний рейтинг</h2><div class="rank" id="ranking"></div></section><div class="foot" id="updated">Завантажуємо результати з Google Sheets…<br>Blanche + Double-Ambrée + Blonde · усі сорти разом, у літрах.</div></div><script>
 const venues=['ТіП Поділ','ТіП Оболонь','ТіП Харківська','ТіП Троя','ТіП Печерськ','Теплий Трост','Теплий Ліськівська'];
 const first=['Маргарита','Андрій','Олена','Дмитро','Катерина','Владислав','Анастасія','Максим','Ірина','Богдан','Софія','Олександр'];const last=['Коваль','Мельник','Шевченко','Бондар','Кравченко','Лисенко','Ткаченко','Поліщук','Романюк','Савченко','Гриценко','Мороз'];
 let data=venues.map(venue=>({venue,people:[]}));
-let month='nov',selected=null;const fmt=n=>Number(n||0).toLocaleString('uk-UA',{maximumFractionDigits:2});const sorted=v=>[...v.people].sort((a,b)=>(b[month]||0)-(a[month]||0));const initials=s=>s.split(' ').map(x=>x[0]).slice(0,2).join('');const avatar=p=>p.photo?`<img src="${escapeHtml(p.photo)}" alt="">`:initials(p.name);function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+let month='nov',selected=null;let lastFilledDate=null;const fmt=n=>Number(n||0).toLocaleString('uk-UA',{maximumFractionDigits:2});const sorted=v=>[...v.people].sort((a,b)=>(b[month]||0)-(a[month]||0));const initials=s=>s.split(' ').map(x=>x[0]).slice(0,2).join('');const avatar=p=>p.photo?`<img src="${escapeHtml(p.photo)}" alt="">`:initials(p.name);function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 // Шлях до фотографії надходить з окремої вкладки Google Sheets.
 // Дозволяємо лише локальні файли в папці photos.
 function photoFor(path){
@@ -81,17 +84,77 @@ function renderPodium(p,network=false){
     return `<div class="place ${index===0?'first':index===1?'second':'third'}" ${active?`role="button" tabindex="0" aria-label="Відкрити ${escapeHtml(a.venue)}" onclick="openVenue(${a.venueIndex})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openVenue(${a.venueIndex})}"`:''}><div class="portrait-area"><div class="avatar-wrap">${index===0?`<span class="top-crown">👑</span><span class="laurel"><svg viewBox="0 0 250 210" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="#d7a13b" stroke-width="2.5" stroke-linecap="round"><path d="M91 190 C45 170 20 122 43 56"/><path d="M159 190 C205 170 230 122 207 56"/></g><g fill="#e7ad38"><ellipse cx="57" cy="167" rx="6" ry="16" transform="rotate(-47 57 167)"/><ellipse cx="43" cy="147" rx="6" ry="15" transform="rotate(-29 43 147)"/><ellipse cx="34" cy="126" rx="6" ry="15" transform="rotate(-15 34 126)"/><ellipse cx="34" cy="105" rx="6" ry="14" transform="rotate(5 34 105)"/><ellipse cx="39" cy="84" rx="6" ry="14" transform="rotate(23 39 84)"/><ellipse cx="48" cy="65" rx="5" ry="13" transform="rotate(35 48 65)"/><ellipse cx="193" cy="167" rx="6" ry="16" transform="rotate(47 193 167)"/><ellipse cx="207" cy="147" rx="6" ry="15" transform="rotate(29 207 147)"/><ellipse cx="216" cy="126" rx="6" ry="15" transform="rotate(15 216 126)"/><ellipse cx="216" cy="105" rx="6" ry="14" transform="rotate(-5 216 105)"/><ellipse cx="211" cy="84" rx="6" ry="14" transform="rotate(-23 211 84)"/><ellipse cx="202" cy="65" rx="5" ry="13" transform="rotate(-35 202 65)"/></g></svg></span>`:''}<div class="avatar">${a?avatar(a):'?'}</div><span class="medal">${medal}</span></div></div><div class="stage">${network&&a&&index===0?networkBadge(a):''}<div class="stage-name">${a?escapeHtml(a.name):'—'}</div>${!network&&a?networkBadge({...a,venue:p.venue||''}):''}${network&&a?`<div class="network-venue">${escapeHtml(a.venue)}</div>`:''}<div class="stage-value">${a?fmt(a[month]):'0'} л</div></div></div>`;
   }).join('');
 }
+// Daily figures are optional in the API. Never infer the last filled date from the fetch timestamp.
+function parseDayKey(key,monthNumber){
+  const s=String(key).trim();
+  let m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(m)return Number(m[1])===2026&&Number(m[2])===monthNumber?Number(m[3]):null;
+  m=s.match(/^(\d{1,2})[.\/](\d{1,2})(?:[.\/](\d{4}))?$/);
+  if(m)return Number(m[2])===monthNumber&&(!m[3]||Number(m[3])===2026)?Number(m[1]):null;
+  if(/^\d{1,2}$/.test(s))return Number(s);
+  return null;
+}
+function dailyFor(person){
+  const raw=person.dailySales;
+  const monthNumber=month==='nov'?11:12;
+  const out={};
+  if(raw&&typeof raw==='object'&&!Array.isArray(raw)){
+    Object.entries(raw).forEach(([key,value])=>{
+      const day=parseDayKey(key,monthNumber);
+      if(day!==null&&day>=1&&day<=31&&value!==null&&value!==''&&Number.isFinite(Number(value)))out[day]=Number(value);
+    });
+  }
+  return out;
+}
+function monthLastDay(){
+  if(!lastFilledDate)return null;
+  const m=String(lastFilledDate).match(/^(2026)-(11|12)-(\d{2})$/);
+  if(!m||Number(m[2])!==(month==='nov'?11:12))return null;
+  return Number(m[3]);
+}
+function venueProgress(v){
+  const end=monthLastDay();
+  if(end===null||end<7)return null;
+  // 7–N листопада проти 1–(N−6): однакова кількість днів.
+  const currentStart=7;
+  const previousStart=1;
+  const previousEnd=end-6;
+  let current=0,previous=0;
+  for(const person of v.people){
+    const daily=dailyFor(person);
+    // Require every compared day, including explicitly recorded zero-sales days.
+    for(let day=previousStart;day<=previousEnd;day++){
+      if(!Object.hasOwn(daily,day))return null;
+      previous+=daily[day];
+    }
+    for(let day=currentStart;day<=end;day++){
+      if(!Object.hasOwn(daily,day))return null;
+      current+=daily[day];
+    }
+  }
+  if(!v.people.length||previous<=0)return null;
+  return (current/previous-1)*100;
+}
+function restaurantCard(v,i){
+  const sum=v.people.reduce((total,p)=>total+(Number(p[month])||0),0);
+  const end=monthLastDay();
+  const progress=venueProgress(v);
+  const progressClass=progress===null?'unknown':progress>0.05?'up':progress< -0.05?'down':'flat';
+  const progressText=progress===null?'—':`${progress>0?'↗ ':progress<0?'↘ ':'→ '}${progress>0?'+':''}${fmt(progress)}%`;
+  const label=end?`Продано за 1–${end}.${month==='nov'?'11':'12'}`:`Продано за ${month==='nov'?'листопад':'грудень'}`;
+  const note=progress===null?'Очікуємо дані за днями':'';
+  return `<button class="card" onclick="openVenue(${i})"><div class="card-top"><span class="num">АРЕНА 0${i+1}</span><span class="arrow">↗</span></div><h3>${escapeHtml(v.venue)}</h3><div class="card-metrics"><div class="card-progress"><span class="card-progress-label">Прогрес відносно минулого тижня</span><span class="card-progress-value ${progressClass}">${progressText}</span><span class="card-progress-note">${note}</span></div><div class="card-sales"><span class="card-sales-label">${label}</span><span class="card-sales-value">${fmt(sum)} л</span></div></div></button>`;
+}
 function render(){
   document.getElementById('home').classList.toggle('hide',selected!==null);
   document.getElementById('detail').classList.toggle('hide',selected===null);
-  const leaders=data.map((v,i)=>({v,i,p:sorted(v)[0]}));
   const all=data.flatMap(v=>v.people);
   document.getElementById('players').textContent=all.length;
   document.getElementById('total').textContent=fmt(all.reduce((s,p)=>s+(+p[month]||0),0))+' л';
   const top=networkTop();
   document.getElementById('networkMonth').textContent=month==='nov'?'ЛИСТОПАД':'ГРУДЕНЬ';
   document.getElementById('networkPodium').innerHTML=top.length?renderPodium(top,true):'<p style="grid-column:1/-1;text-align:center;color:var(--muted)">Лідери з’являться після внесення продажів.</p>';
-  document.getElementById('cards').innerHTML=leaders.map(({v,i,p})=>`<button class="card" onclick="openVenue(${i})"><span class="num">АРЕНА 0${i+1}</span><span class="arrow">↗</span><h3>${escapeHtml(v.venue)}</h3><span class="liters">${p?fmt(p[month]):'0'} л</span><p>🥇 ${p&&p[month]>0?escapeHtml(p.name):'Лідера поки немає'}</p></button>`).join('');
+  document.getElementById('cards').innerHTML=data.map(restaurantCard).join('');
   if(selected!==null){
     const v=data[selected],p=sorted(v);
     document.getElementById('venue').textContent=v.venue;
@@ -110,10 +173,11 @@ const DATA_URL='https://script.google.com/macros/s/AKfycbwKh9gPffJ9csREkyoJ334aZ
     if(!r.ok)throw Error('HTTP '+r.status);
     const j=await r.json();
     if(!Array.isArray(j.restaurants))throw Error('Невірний формат даних');
+    lastFilledDate=typeof j.lastFilledDate==='string'?j.lastFilledDate:null;
     data=j.restaurants.map(v=>({
       venue:String(v.name||''),
       people:(Array.isArray(v.heroes)?v.heroes:[]).filter(p=>p&&String(p.name||'').trim()).map(p=>({
-        name:String(p.name).trim(),nov:Number(p.november)||0,dec:Number(p.december)||0,photo:photoFor(p.photo)
+        name:String(p.name).trim(),nov:Number(p.november)||0,dec:Number(p.december)||0,photo:photoFor(p.photo),dailySales:p.dailySales||null
       }))
     }));
     document.getElementById('mode').textContent='● LIVE · Google Sheets';
